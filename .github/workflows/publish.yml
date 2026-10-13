@@ -1,0 +1,52 @@
+name: Publish to PyPI
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Prepare build directory
+        run: |
+          # Accept tags such as "v1.2.3", "ownSQL-1.2.3", or "ownSQL-v1.2.3".
+          VERSION="${GITHUB_REF_NAME#ownSQL-}"
+          VERSION="${VERSION#[vV]}"
+          echo "Publishing version: ${VERSION}"
+          mkdir build_src
+          cp packaging/setup.py ownSQL.py README.md LICENSE build_src/
+          sed -i "s/version=\"[^\"]*\"/version=\"${VERSION}\"/" build_src/setup.py
+          grep -n "version=" build_src/setup.py
+
+      - name: Build sdist and wheel
+        working-directory: build_src
+        run: |
+          python -m pip install build
+          python -m build
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: build_src/dist/
+
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    environment: pypi
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist/
+
+      - uses: pypa/gh-action-pypi-publish@release/v1

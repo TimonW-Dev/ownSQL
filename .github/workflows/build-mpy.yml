@@ -1,0 +1,42 @@
+name: Build ownSQL.mpy
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ownSQL.py
+      - .github/workflows/build-mpy.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ssh-key: ${{ secrets.MPY_DEPLOY_KEY }}
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Install mpy-cross
+        run: pip install mpy-cross
+
+      - name: Compile ownSQL.py
+        run: mpy-cross -o ownSQL.mpy ownSQL.py
+
+      - name: Commit compiled file
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add ownSQL.mpy
+          if git diff --cached --quiet; then
+            echo "No changes in compiled file."
+          else
+            git commit -m "Update compiled ownSQL.mpy [skip ci]"
+            git push
+          fi
