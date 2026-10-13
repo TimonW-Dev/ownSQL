@@ -19,7 +19,7 @@ setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/TimonW-Dev/ownSQL",
-    package_dir={"": str(root_dir)},
+    package_dir={"": "." if root_dir == setup_dir else ".."},
     py_modules=["ownSQL"],
     classifiers=[
         "Programming Language :: Python :: Implementation :: MicroPython",
