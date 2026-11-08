@@ -1,7 +1,6 @@
 # ownSQL
 
-**A MySQL database driver for MicroPython, supporting MySQL Server 8.x and 9.x.**
-
+**A MySQL database driver for MicroPython, supporting MySQL Server 8.x and 9.x.** <br>
 Made for ESP8266, ESP32, RP2040 (Raspberry Pi Pico W) and other microcontrollers.
 
 ownSQL was derived from `micropg_lite` and adapted from PostgreSQL to MySQL with the assistance of AI tools. `micropg`, the original project on which `micropg_lite` is based, was developed by [Hajime Nakagami](https://github.com/nakagami). Many thanks for the great work — without `micropg`, `ownSQL` would not exist!
